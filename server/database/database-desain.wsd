@@ -1,0 +1,70 @@
+@startuml Waysbuck
+
+entity users {
+    * id: INTEGER
+    --
+    * full_name: VARCHAR
+    * email: VARCHAR
+    * password: VARCHAR
+    * status: VARCHAR
+}
+
+entity profile {
+    * id: INT
+    --
+    image: VARCHAR
+    address: VARCHAR
+    * user_id: VARCHAR
+}
+
+entity products {
+    * id: INT
+    --
+    * title: VARCHAR
+    * price: VARCHAR
+    * image: VARCHAR
+    * user_id
+}
+
+entity toppings {
+    * id: INT
+    --
+    * title: VARCHAR
+    * price: VARCHAR
+    * image: VARCHAR
+    * user_id: VARCHAR
+}
+
+entity topping_cart {
+    id INT
+    --
+    cart_id
+    topping_id
+}
+
+entity cart {
+    * id: INT
+    --
+    * product_id: INT
+    * transaction_id: INT
+    * toppings_id: INT [ ]
+}
+
+entity transaction {
+    * id: INT
+    --
+    * buyer_id: INT
+}
+
+'ctt  Zero or One	|o--
+'ctt Exactly One	||--
+'ctt Zero or Many	}o--
+'ctt One or Many	}|--
+
+cart }o--|| transaction
+users ||--|| profile
+users ||--|{ products
+transaction }o--|| users
+cart }o--o{ topping_cart
+topping_cart }o--o{toppings
+cart }o--|| products

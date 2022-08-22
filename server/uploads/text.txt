@@ -1,0 +1,3 @@
+Menambahkan file agar foldernya terbaca oleh git
+
+Adapun folder ini berfungsi untuk menyimpan seluruh image yang di-upload
