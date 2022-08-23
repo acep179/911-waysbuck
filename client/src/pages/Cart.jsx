@@ -17,8 +17,24 @@ function Cart() {
 
   let { data: carts } = useQuery('cartsUserIdCache', async () => {
     const response = await API.get('/carts-userid');
-    return response.data.data
+
+    const cartData = response.data.data.filter((item) => {
+      return item.transaction_id === null
+    })
+
+    return cartData
   });
+
+  const totalAmount = (array) => {
+    let sum = 0;
+
+    array.forEach(item => {
+      let price = parseInt(item.subtotal)
+      sum += price;
+    });
+
+    return sum;
+  }
 
   const handleModal = () => {
     const modalClose = document.getElementById('modalClose')
@@ -87,14 +103,14 @@ function Cart() {
                 </div>
 
                 <div className='d-flex flex-column'>
-                  <p className='mb-2'>{convertRupiah.convert(69000)}</p>
+                  <p className='mb-2'>{convertRupiah.convert(totalAmount(carts))}</p>
                   <p className='mb-2 text-end'>2</p>
                 </div>
               </div>
 
               <div className='d-flex justify-content-between'>
                 <p>Total</p>
-                <p>{convertRupiah.convert(69000)}</p>
+                <p>{convertRupiah.convert(totalAmount(carts))}</p>
               </div>
 
             </div>
