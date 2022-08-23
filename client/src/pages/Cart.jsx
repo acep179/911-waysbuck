@@ -17,7 +17,6 @@ function Cart() {
 
   let { data: carts } = useQuery('cartsUserIdCache', async () => {
     const response = await API.get('/carts-userid');
-    console.log(response)
     return response.data.data
   });
 
@@ -100,8 +99,8 @@ function Cart() {
 
             </div>
 
-            <div class="d-grid gap-2 mt-5">
-              <button class="btn btn-red" type="button" data-bs-toggle="modal" data-bs-target="#thanksModal">Pay</button>
+            <div className="d-grid gap-2 mt-5">
+              <button className="btn btn-red" type="button" data-bs-toggle="modal" data-bs-target="#thanksModal">Pay</button>
             </div>
 
           </div>

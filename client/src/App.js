@@ -7,11 +7,12 @@ import { UserContext } from "./context/userContext";
 import { Home, AddProductAdmin, AddTopingAdmin, Cart, DetailProduct, IncomeTransactionAdmin, Profile } from './pages'
 
 
-if (localStorage.token) {
-  setAuthToken(localStorage.token);
-}
 
 function App() {
+  
+  if (localStorage.token) {
+    setAuthToken(localStorage.token);
+  }
   
   const [state, dispatch] = useContext(UserContext)
   
