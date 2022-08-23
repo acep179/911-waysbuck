@@ -62,6 +62,9 @@ func (h *handlerCart) CreateCart(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
+	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
+	userId := int(userInfo["id"].(float64))
+
 	request := new(cartsdto.CartRequest)
 	if err := json.NewDecoder(r.Body).Decode(request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -85,8 +88,8 @@ func (h *handlerCart) CreateCart(w http.ResponseWriter, r *http.Request) {
 		ToppingID: request.ToppingID,
 	}
 
-	validatee := validator.New()
-	errr := validatee.Struct(requestForm)
+	validate := validator.New()
+	errr := validate.Struct(requestForm)
 	if errr != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
@@ -97,6 +100,7 @@ func (h *handlerCart) CreateCart(w http.ResponseWriter, r *http.Request) {
 	topping, _ := h.CartRepository.FindToppingsID(request.ToppingID)
 
 	cart := models.Cart{
+		UserID:    userId,
 		ProductID: request.ProductID,
 		SubTotal:  request.SubTotal,
 		Toppings:  topping,

@@ -1,60 +1,102 @@
-import { React, useContext, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useQuery } from 'react-query';
+import { React, useContext, useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useMutation, useQuery } from 'react-query';
 import convertRupiah from 'rupiah-format'
 
-// import topingData from '../fakeData/topingData'
 import { Navbar } from '../components'
 import { CartContext } from '../context/cartContext'
 import { API } from '../config/api';
 
-
-const topingPrice = [0, 0, 0, 0, 0, 0, 0, 0]
 function DetailProduct() {
 
+  const navigate = useNavigate()
   const { id } = useParams()
+
+  let [cart, setCart] = useContext(CartContext)
+  const [toppingPrices, setToppingPrices] = useState([])
+  const [toppings, setToppings] = useState([]);
+  const [toppingId, setToppingId] = useState([]);
 
   let { data: product } = useQuery('productCache', async () => {
     const response = await API.get(`/product/${id}`);
     return response.data.data
   });
 
-  let { data: toppings } = useQuery('toppingsCache', async () => {
-    const response = await API.get('/toppings');
-    return response.data.data
-  });
+  const getToppings = async () => {
+    try {
+      const response = await API.get('/toppings');
+      setToppings(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  let [cart, setCart] = useContext(CartContext)
-  let [price, setPrice] = useState([0, 0, 0, 0, 0, 0, 0, 0])
-  let [totalPrice, setTotalPrice] = useState(product?.price)
+  const handleOnChange = (e) => {
+    const id = e.target.id;
+    const checked = e.target.checked;
+    const price = e.target.value;
 
-  const total = (array) => {
+    if (checked) {
+      setToppingId([...toppingId, parseInt(id)]);
+      setToppingPrices([...toppingPrices, { id: parseInt(id), price: parseInt(price) }])
+
+    } else {
+
+      let newToppingId = toppingId.filter((toppingIdItem) => {
+        return toppingIdItem != id;
+      });
+
+      let newToppingPrice = toppingPrices.filter((toppingPriceItem) => {
+        return toppingPriceItem.id != id;
+      });
+
+      setToppingId(newToppingId);
+      setToppingPrices(newToppingPrice)
+    }
+  };
+
+  const totalPrice = (array) => {
     let sum = 0;
 
     array.forEach(item => {
-      sum += item;
+      let price = parseInt(item.price)
+      sum += price;
     });
 
-    sum += product.price
+    sum += product?.price
     return sum;
   }
 
-  const handleOnChange = (e) => {
+  const handleSubmit = useMutation(async (e) => {
+    try {
+      e.preventDefault()
+      setCart(cart++)
 
-    if (e.target.checked) {
-      setPrice(price.splice(e.target.id - 1, 1, Number(e.target.value)))
-    } else {
-      setPrice(price.splice(e.target.id - 1, 1, 0))
+      const config = {
+        headers: {
+          'Content-type': 'application/json',
+        },
+      };
+
+      const cartData = {
+        subtotal: totalPrice(toppingPrices),
+        product_id: product?.id,
+        topping_id: toppingId
+      }
+
+      const body = JSON.stringify(cartData);
+      await API.post('/cart', body, config);
+
+      navigate("/cart")
+    } catch (error) {
+      console.log(error);
     }
 
-    setPrice(topingPrice)
-    setTotalPrice(total(price))
-  }
+  })
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setCart(cart++)
-  }
+  useEffect(() => {
+    getToppings();
+  }, [])
 
 
   return (
@@ -66,7 +108,7 @@ function DetailProduct() {
           <div className='col-7 text-red'>
             <h1 >{product?.title}</h1>
             <p>{convertRupiah.convert(product?.price)}</p>
-            <form onSubmit={(e) => handleSubmit(e)}>
+            <form onSubmit={(e) => handleSubmit.mutate(e)}>
               <div>
                 <h5>Toping</h5>
                 <div className='row'>
@@ -85,7 +127,7 @@ function DetailProduct() {
               </div>
               <div className='d-flex justify-content-between'>
                 <h5>Total</h5>
-                <h5>{convertRupiah.convert(totalPrice)}</h5>
+                <h5>{convertRupiah.convert(totalPrice(toppingPrices))}</h5>
               </div>
               <div className='d-grid gap-2'>
                 <button className='btn btn-red d-grid gap-2'>Add Cart</button>

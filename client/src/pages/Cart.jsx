@@ -68,7 +68,7 @@ function Cart() {
                       </p>
                     </div>
                     <div className='col-2 text-end d-flex flex-column justify-content-evenly align-items-end'>
-                      <p className='m-0'>{convertRupiah.convert(cart?.product?.price)}</p>
+                      <p className='m-0'>{convertRupiah.convert(cart?.subtotal)}</p>
                       <img className='cursor-pointer' src={bin} alt='erase' style={{ height: 20 }} />
                     </div>
                   </div>
