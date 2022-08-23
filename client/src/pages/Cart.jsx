@@ -15,8 +15,9 @@ function Cart() {
 
   const navigate = useNavigate()
 
-  let { data: transactions } = useQuery('transactionsCache', async () => {
-    const response = await API.get('/transactions');
+  let { data: carts } = useQuery('cartsUserIdCache', async () => {
+    const response = await API.get('/carts-userid');
+    console.log(response)
     return response.data.data
   });
 
@@ -32,12 +33,12 @@ function Cart() {
       <Navbar />
       <div className='text-red' style={{ marginTop: 90, width: '90%' }}>
 
-        <div onClick={handleModal} class="modal fade" id="thanksModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div onClick={handleModal} className="modal fade" id="thanksModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div data-bs-dismiss="modal" id='modalClose'></div>
-          <div onClick={handleModal} class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content thanks-message">
+          <div onClick={handleModal} className="modal-dialog modal-dialog-centered modal-xl">
+            <div className="modal-content thanks-message">
 
-              <div class="modal-body">
+              <div className="modal-body">
                 <p>Thank you for ordering in us, please wait to verify your order</p>
               </div>
 
@@ -51,38 +52,32 @@ function Cart() {
         <div className='row justify-content-between'>
           <p>Review Your Order</p>
           <div className='col-7 '>
-            {transactions?.map((item) => {
-              return (
+            <div className='cart row pt-3 mb-4'>
 
-                <div className='cart row pt-3 mb-4'>
+              {carts?.map((cart) => {
+                return (
 
-                  {item?.cart?.map((cart) => {
-                    return (
+                  <div className='d-flex justify-content-between mb-3' key={cart?.id}>
+                    <div className='cart-image col-2' style={{ backgroundImage: `url(http://localhost:5000/uploads/${cart?.product?.image})` }}>
+                    </div>
+                    <div className='col-8 d-flex flex-column justify-content-evenly align-items-start'>
+                      <p className='m-0'>{cart?.product?.title}</p>
+                      <p className='m-0'>Toping:
+                        {cart?.toppings?.map((topping) => {
+                          return `${topping?.title}, `
+                        })}
+                      </p>
+                    </div>
+                    <div className='col-2 text-end d-flex flex-column justify-content-evenly align-items-end'>
+                      <p className='m-0'>{convertRupiah.convert(cart?.product?.price)}</p>
+                      <img className='cursor-pointer' src={bin} alt='erase' style={{ height: 20 }} />
+                    </div>
+                  </div>
 
-                      <div className='d-flex justify-content-between mb-3' key={cart?.product?.id}>
-                        <div className='cart-image col-2' style={{ backgroundImage: `url(http://localhost:5000/uploads/${cart?.product?.image})` }}>
-                        </div>
-                        <div className='col-8 d-flex flex-column justify-content-evenly align-items-start'>
-                          <p className='m-0'>{cart?.product?.title}</p>
-                          <p className='m-0'>Toping:
-                            {cart?.toppings?.map((topping) => {
-                              return `${topping?.title}, `
-                            })}
-                          </p>
-                        </div>
-                        <div className='col-2 text-end d-flex flex-column justify-content-evenly align-items-end'>
-                          <p className='m-0'>{convertRupiah.convert(cart?.product?.price)}</p>
-                          <img className='cursor-pointer' src={bin} alt='erase' style={{ height: 20 }} />
-                        </div>
-                      </div>
+                )
+              })}
 
-                    )
-                  })}
-
-                </div>
-
-              )
-            })}
+            </div>
           </div>
           <div className='col-4 h-50'>
             <div >

@@ -3,9 +3,11 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from 'react-query';
 import convertRupiah from 'rupiah-format'
 
+// import topingData from '../fakeData/topingData'
 import { Navbar } from '../components'
 import { CartContext } from '../context/cartContext'
 import { API } from '../config/api';
+
 
 const topingPrice = [0, 0, 0, 0, 0, 0, 0, 0]
 function DetailProduct() {

@@ -9,6 +9,7 @@ import (
 	"waysbuck/repositories"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type handlerCart struct {
@@ -34,6 +35,26 @@ func (h *handlerCart) FindCarts(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Status: http.StatusOK, Data: carts}
 
+	json.NewEncoder(w).Encode(response)
+}
+
+func (h *handlerCart) FindCartsByUserID(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	userInfo := r.Context().Value("userInfo").(jwt.MapClaims)
+	userId := int(userInfo["id"].(float64))
+
+	carts, err := h.CartRepository.FindCartsByUserID(userId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	response := dto.SuccessResult{Status: http.StatusOK, Data: carts}
 	json.NewEncoder(w).Encode(response)
 }
 
