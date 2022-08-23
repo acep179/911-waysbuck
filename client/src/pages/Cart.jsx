@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'react-query';
 import convertRupiah from 'rupiah-format'
@@ -15,21 +15,21 @@ function Cart() {
 
   const navigate = useNavigate()
 
-  let { data: carts } = useQuery('cartsUserIdCache', async () => {
+  let { data: cartData } = useQuery('cartsUserIdCache', async () => {
     const response = await API.get('/carts-userid');
-
-    const cartData = response.data.data.filter((item) => {
-      return item.transaction_id === null
-    })
-
-    return cartData
+    console.log(response)
+    return response.data.data
   });
+
+  const carts = cartData?.filter((item) => {
+    return item.transaction_id === null
+  })
 
   const totalAmount = (array) => {
     let sum = 0;
 
     array.forEach(item => {
-      let price = parseInt(item.subtotal)
+      let price = parseInt(item?.subtotal)
       sum += price;
     });
 
@@ -103,14 +103,14 @@ function Cart() {
                 </div>
 
                 <div className='d-flex flex-column'>
-                  <p className='mb-2'>{convertRupiah.convert(totalAmount(carts))}</p>
+                  <p className='mb-2'>{carts ? convertRupiah.convert(totalAmount(carts)) : 0}</p>
                   <p className='mb-2 text-end'>2</p>
                 </div>
               </div>
 
               <div className='d-flex justify-content-between'>
                 <p>Total</p>
-                <p>{convertRupiah.convert(totalAmount(carts))}</p>
+                <p>{carts ? convertRupiah.convert(totalAmount(carts)) : 0}</p>
               </div>
 
             </div>
