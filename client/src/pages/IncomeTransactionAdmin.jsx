@@ -20,9 +20,9 @@ function IncomeTransactionAdmin() {
 
       <Navbar />
 
-      <div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
+      <div className="modal fade" id="transactionModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
 
             <TransactionCard
               id={transactions?.id}

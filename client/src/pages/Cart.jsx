@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import convertRupiah from 'rupiah-format'
 
 import bin from './../assets/img/bin.png'
@@ -43,6 +43,33 @@ function Cart() {
     navigate('/profile')
   }
 
+  const handleTransaction = useMutation(async (e) => {
+    try {
+      e.preventDefault()
+
+      const config = {
+        headers: {
+          'Content-type': 'application/json',
+        },
+      };
+
+      const transactionInput = {
+        amount: totalAmount(carts)
+      }
+
+      const transactionBody = JSON.stringify(transactionInput)
+      const transaction = await API.post("/transaction", transactionBody, config)
+
+      for (let i = 0; i < carts.length; i++) {
+        await API.post(`/cart/${carts[i].id}`, { "transaction_id": transaction.data.data.id }, config)
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+
+  })
+
   return (
     <div className='container d-flex justify-content-center'>
       <Navbar />
@@ -60,8 +87,6 @@ function Cart() {
             </div>
           </div>
         </div>
-
-
 
         <h3 >My Cart</h3>
         <div className='row justify-content-between'>
@@ -104,7 +129,7 @@ function Cart() {
 
                 <div className='d-flex flex-column'>
                   <p className='mb-2'>{carts ? convertRupiah.convert(totalAmount(carts)) : 0}</p>
-                  <p className='mb-2 text-end'>2</p>
+                  <p className='mb-2 text-end'>{carts ? carts.length : 0}</p>
                 </div>
               </div>
 
@@ -116,7 +141,15 @@ function Cart() {
             </div>
 
             <div className="d-grid gap-2 mt-5">
-              <button className="btn btn-red" type="button" data-bs-toggle="modal" data-bs-target="#thanksModal">Pay</button>
+              <button
+                className="btn btn-red"
+                type="button"
+                onClick={(e) => handleTransaction.mutate(e)}
+                data-bs-toggle="modal"
+                data-bs-target="#thanksModal"
+              >
+                Pay
+              </button>
             </div>
 
           </div>
