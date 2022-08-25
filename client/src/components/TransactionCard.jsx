@@ -7,7 +7,6 @@ import qrDummy from './../assets/img/qr-dummy.png'
 
 function TransactionCard(props) {
 
-  console.log(props)
   return (
     <div className="card bg-pink" style={{ maxWidth: 540, marginBottom: props.mb }}>
       <div className="row g-0 pt-3 px-3">

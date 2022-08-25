@@ -16,8 +16,8 @@ type User struct {
 	UpdatedAt   time.Time            `json:"-"`
 }
 
-//todo relation to the another table
-//ctt atribut yang di tulis harus sama
+// todo relation to the another table
+// ctt atribut yang di tulis harus sama
 type UserProfileRel struct {
 	ID       int    `json:"id"`
 	FullName string `json:"fullName"`
