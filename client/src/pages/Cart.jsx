@@ -61,7 +61,7 @@ function Cart() {
       const transaction = await API.post("/transaction", transactionBody, config)
 
       for (let i = 0; i < carts.length; i++) {
-        await API.post(`/cart/${carts[i].id}`, { "transaction_id": transaction.data.data.id }, config)
+        await API.patch(`/cart/${carts[i].id}`, { "transaction_id": transaction.data.data.id }, config)
       }
 
     } catch (error) {
