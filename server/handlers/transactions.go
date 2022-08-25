@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
+	"math/rand"
 	"net/http"
+	"os"
 	dto "waysbuck/dto/result"
 	transactiondto "waysbuck/dto/transactions"
 	"waysbuck/models"
@@ -10,7 +12,13 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/midtrans/midtrans-go/coreapi"
 )
+
+var c = coreapi.Client{
+	ServerKey: os.Getenv("SERVER_KEY"),
+	ClientKey: os.Getenv("CLIENT_KEY"),
+}
 
 type handlerTransaction struct {
 	TransactionRepository repositories.TransactionRepository
@@ -30,6 +38,7 @@ func (h *handlerTransaction) FindTransactions(w http.ResponseWriter, r *http.Req
 		w.WriteHeader(http.StatusInternalServerError)
 		response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
 		json.NewEncoder(w).Encode(response)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -63,13 +72,24 @@ func (h *handlerTransaction) CreateTransaction(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	transaction := models.Transaction{
-		Amount: request.Amount,
-		Status: "Waiting Approve",
-		UserID: userId,
+	var TransIdIsMatch = false
+	var TransactionId int
+	for !TransIdIsMatch {
+		TransactionId = userId + rand.Intn(10000) - rand.Intn(100)
+		transactionData, _ := h.TransactionRepository.GetTransaction(TransactionId)
+		if transactionData.ID == 0 {
+			TransIdIsMatch = true
+		}
 	}
 
-	data, err := h.TransactionRepository.CreateTransaction(transaction)
+	transaction := models.Transaction{
+		ID:      TransactionId,
+		Amount:  request.Amount,
+		Status:  "Waiting Approve",
+		BuyerID: userId,
+	}
+
+	newTransaction, err := h.TransactionRepository.CreateTransaction(transaction)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		response := dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()}
@@ -78,15 +98,15 @@ func (h *handlerTransaction) CreateTransaction(w http.ResponseWriter, r *http.Re
 	}
 
 	w.WriteHeader(http.StatusOK)
-	response := dto.SuccessResult{Status: http.StatusOK, Data: convertTransactionResponse(data)}
+	response := dto.SuccessResult{Status: http.StatusOK, Data: convertTransactionResponse(newTransaction)}
 	json.NewEncoder(w).Encode(response)
 }
 
 func convertTransactionResponse(u models.Transaction) transactiondto.TransactionResponse {
 	return transactiondto.TransactionResponse{
-		ID:     u.ID,
-		Amount: u.Amount,
-		Status: u.Status,
-		UserID: u.UserID,
+		ID:      u.ID,
+		Amount:  u.Amount,
+		Status:  u.Status,
+		BuyerID: u.BuyerID,
 	}
 }

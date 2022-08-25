@@ -55,7 +55,7 @@ func (r *repository) UpdateCart(cart models.Cart) (models.Cart, error) {
 
 func (r *repository) FindToppingsID(ToppingID []int) ([]models.Topping, error) {
 	var toppings []models.Topping
-	err := r.db.Debug().Find(&toppings, ToppingID).Error
+	err := r.db.Find(&toppings, ToppingID).Error
 
 	return toppings, err
 }

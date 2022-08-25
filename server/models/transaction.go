@@ -6,8 +6,8 @@ type Transaction struct {
 	ID        int            `json:"id" gorm:"primary_key:auto_increment"`
 	Amount    int            `json:"amount"`
 	Status    string         `json:"status"`
-	UserID    int            `json:"user_id"`
-	User      UserProfileRel `json:"user"`
+	BuyerID   int            `json:"buyer_id"`
+	Buyer     UserProfileRel `json:"buyer"`
 	Carts     []Cart         `json:"cart"`
 	CreatedAt time.Time      `json:"-"`
 	UpdatedAt time.Time      `json:"updated_at"`

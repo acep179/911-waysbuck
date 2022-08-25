@@ -8,6 +8,8 @@ import (
 
 type TransactionRepository interface {
 	FindTransactions() ([]models.Transaction, error)
+	GetTransaction(ID int) (models.Transaction, error)
+	GetOneTransaction(ID string) (models.Transaction, error)
 	CreateTransaction(models.Transaction) (models.Transaction, error)
 }
 
@@ -17,9 +19,24 @@ func RepositoryTransaction(db *gorm.DB) *repository {
 
 func (r *repository) FindTransactions() ([]models.Transaction, error) {
 	var transactions []models.Transaction
-	err := r.db.Preload("Carts.Product").Preload("Carts.Toppings").Preload("User").Find(&transactions).Error
+	err := r.db.Preload("Carts.Product").Preload("Carts.Toppings").Preload("Buyer").Find(&transactions).Error
 
 	return transactions, err
+}
+
+func (r *repository) GetTransaction(ID int) (models.Transaction, error) {
+	var transactions models.Transaction
+	err := r.db.Find(&transactions, ID).Error
+
+	return transactions, err
+}
+
+// GetOneTransaction method here ...
+func (r *repository) GetOneTransaction(ID string) (models.Transaction, error) {
+	var transaction models.Transaction
+	err := r.db.First(&transaction, ID).Error
+
+	return transaction, err
 }
 
 func (r *repository) CreateTransaction(transaction models.Transaction) (models.Transaction, error) {

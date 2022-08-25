@@ -5,7 +5,7 @@ type CreateTransactionRequest struct {
 }
 
 type UpdateTransactionRequest struct {
-	Amount int    `json:"amount"`
-	Status string `json:"status"`
-	UserID int    `json:"user_id"`
+	Amount  int    `json:"amount"`
+	Status  string `json:"status"`
+	BuyerID int    `json:"user_id"`
 }
