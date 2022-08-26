@@ -67,13 +67,53 @@ function Cart() {
 
       const snap = await API.get(`/snap/${id}`)
 
-      console.log(snap)
+      const token = snap.data.data.token;
+
+      window.snap.pay(token, {
+        onSuccess: function (result) {
+          /* You may add your own implementation here */
+          console.log(result);
+          navigate("/profile");
+        },
+        onPending: function (result) {
+          /* You may add your own implementation here */
+          console.log(result);
+          navigate("/profile");
+        },
+        onError: function (result) {
+          /* You may add your own implementation here */
+          console.log(result);
+        },
+        onClose: function () {
+          /* You may add your own implementation here */
+          alert("you closed the popup without finishing the payment");
+        },
+      });
+
 
     } catch (error) {
       console.log(error)
     }
 
   })
+
+  useEffect(() => {
+    //change this to the script source you want to load, for example this is snap.js sandbox env
+    const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
+    //change this according to your client-key
+    const myMidtransClientKey = "SB-Mid-client-atipSA3xV89VkF3D";
+
+    let scriptTag = document.createElement("script");
+    scriptTag.src = midtransScriptUrl;
+    // optional if you want to set script attribute
+    // for example snap.js have data-client-key attribute
+    scriptTag.setAttribute("data-client-key", myMidtransClientKey);
+
+    document.body.appendChild(scriptTag);
+    return () => {
+      document.body.removeChild(scriptTag);
+    };
+  }, []);
 
   return (
     <div className='container d-flex justify-content-center'>
@@ -150,8 +190,6 @@ function Cart() {
                 className="btn btn-red"
                 type="button"
                 onClick={(e) => handleTransaction.mutate(e)}
-                data-bs-toggle="modal"
-                data-bs-target="#thanksModal"
               >
                 Pay
               </button>

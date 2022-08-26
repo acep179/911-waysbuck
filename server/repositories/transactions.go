@@ -11,6 +11,7 @@ type TransactionRepository interface {
 	GetTransaction(ID int) (models.Transaction, error)
 	GetOneTransaction(ID string) (models.Transaction, error)
 	CreateTransaction(models.Transaction) (models.Transaction, error)
+	UpdateTransaction(status string, ID string) (models.Transaction, error)
 }
 
 func RepositoryTransaction(db *gorm.DB) *repository {
@@ -41,6 +42,18 @@ func (r *repository) GetOneTransaction(ID string) (models.Transaction, error) {
 
 func (r *repository) CreateTransaction(transaction models.Transaction) (models.Transaction, error) {
 	err := r.db.Create(&transaction).Error
+
+	return transaction, err
+}
+
+func (r *repository) UpdateTransaction(status string, ID string) (models.Transaction, error) {
+	var transaction models.Transaction
+
+	r.db.First(&transaction, ID)
+
+	transaction.Status = status
+
+	err := r.db.Save(&transaction).Error
 
 	return transaction, err
 }

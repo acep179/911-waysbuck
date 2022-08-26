@@ -146,6 +146,48 @@ func (h *handlerTransaction) GetSnap(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+func (h *handlerTransaction) Notification(w http.ResponseWriter, r *http.Request) {
+	var notificationPayload map[string]interface{}
+
+	err := json.NewDecoder(r.Body).Decode(&notificationPayload)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		response := dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()}
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	transactionStatus := notificationPayload["transaction_status"].(string)
+	fraudStatus := notificationPayload["fraud_status"].(string)
+	orderId := notificationPayload["order_id"].(string)
+
+	if transactionStatus == "capture" {
+		if fraudStatus == "challenge" {
+			// TODO set transaction status on your database to 'challenge'
+			// e.g: 'Payment status challenged. Please take action on your Merchant Administration Portal
+			h.TransactionRepository.UpdateTransaction("pending", orderId)
+		} else if fraudStatus == "accept" {
+			// TODO set transaction status on your database to 'success'
+			h.TransactionRepository.UpdateTransaction("success", orderId)
+		}
+	} else if transactionStatus == "settlement" {
+		// TODO set transaction status on your databaase to 'success'
+		h.TransactionRepository.UpdateTransaction("success", orderId)
+	} else if transactionStatus == "deny" {
+		// TODO you can ignore 'deny', because most of the time it allows payment retries
+		// and later can become success
+		h.TransactionRepository.UpdateTransaction("failed", orderId)
+	} else if transactionStatus == "cancel" || transactionStatus == "expire" {
+		// TODO set transaction status on your databaase to 'failure'
+		h.TransactionRepository.UpdateTransaction("failed", orderId)
+	} else if transactionStatus == "pending" {
+		// TODO set transaction status on your databaase to 'pending' / waiting payment
+		h.TransactionRepository.UpdateTransaction("pending", orderId)
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
 func convertTransactionResponse(u models.Transaction) transactiondto.TransactionResponse {
 	return transactiondto.TransactionResponse{
 		ID:      u.ID,
