@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"waysbuck/database"
 	"waysbuck/pkg/mysql"
 	"waysbuck/routes"
@@ -31,12 +32,13 @@ func main() {
 
 	r.PathPrefix("/uploads").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 
+	var port = os.Getenv("PORT")
+
 	//. Setup allowed Header, Method, and Origin for CORS
 	var AllowedHeaders = handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	var AllowedMethods = handlers.AllowedMethods([]string{"GET", "POST", "HEAD", "OPTIONS", "PATCH", "DELETE"})
 	var AllowedOrigins = handlers.AllowedOrigins([]string{"*"})
 
-	var port = "5000"
 	fmt.Println("server running localhost:" + port)
 
 	//. Embed the setup allowed in 2 parameter
