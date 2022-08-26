@@ -165,24 +165,24 @@ func (h *handlerTransaction) Notification(w http.ResponseWriter, r *http.Request
 		if fraudStatus == "challenge" {
 			// TODO set transaction status on your database to 'challenge'
 			// e.g: 'Payment status challenged. Please take action on your Merchant Administration Portal
-			h.TransactionRepository.UpdateTransaction("pending", orderId)
+			h.TransactionRepository.UpdateTransaction("Waiting Approve", orderId)
 		} else if fraudStatus == "accept" {
 			// TODO set transaction status on your database to 'success'
-			h.TransactionRepository.UpdateTransaction("success", orderId)
+			h.TransactionRepository.UpdateTransaction("Success", orderId)
 		}
 	} else if transactionStatus == "settlement" {
 		// TODO set transaction status on your databaase to 'success'
-		h.TransactionRepository.UpdateTransaction("success", orderId)
+		h.TransactionRepository.UpdateTransaction("Success", orderId)
 	} else if transactionStatus == "deny" {
 		// TODO you can ignore 'deny', because most of the time it allows payment retries
 		// and later can become success
-		h.TransactionRepository.UpdateTransaction("failed", orderId)
+		h.TransactionRepository.UpdateTransaction("Failed", orderId)
 	} else if transactionStatus == "cancel" || transactionStatus == "expire" {
 		// TODO set transaction status on your databaase to 'failure'
-		h.TransactionRepository.UpdateTransaction("failed", orderId)
+		h.TransactionRepository.UpdateTransaction("Canceled", orderId)
 	} else if transactionStatus == "pending" {
 		// TODO set transaction status on your databaase to 'pending' / waiting payment
-		h.TransactionRepository.UpdateTransaction("pending", orderId)
+		h.TransactionRepository.UpdateTransaction("Waiting Approve", orderId)
 	}
 
 	w.WriteHeader(http.StatusOK)
@@ -190,9 +190,9 @@ func (h *handlerTransaction) Notification(w http.ResponseWriter, r *http.Request
 
 func convertTransactionResponse(u models.Transaction) transactiondto.TransactionResponse {
 	return transactiondto.TransactionResponse{
-		ID:      u.ID,
-		Amount:  u.Amount,
-		Status:  u.Status,
-		BuyerID: u.BuyerID,
+		ID:     u.ID,
+		Amount: u.Amount,
+		Status: u.Status,
+		UserID: u.BuyerID,
 	}
 }

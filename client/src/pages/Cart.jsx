@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation, useQuery } from 'react-query';
 import convertRupiah from 'rupiah-format'
@@ -7,17 +7,14 @@ import bin from './../assets/img/bin.png'
 
 import { API } from '../config/api';
 import { Navbar } from '../components'
-import { CartContext } from '../context/cartContext'
 
 function Cart() {
 
-  const [_, setCart] = useContext(CartContext)
 
   const navigate = useNavigate()
 
   let { data: cartData } = useQuery('cartsUserIdCache', async () => {
     const response = await API.get('/carts-userid');
-    console.log(response)
     return response.data.data
   });
 
@@ -38,7 +35,6 @@ function Cart() {
 
   const handleModal = () => {
     const modalClose = document.getElementById('modalClose')
-    setCart(0)
     modalClose.click()
     navigate('/profile')
   }
@@ -120,7 +116,7 @@ function Cart() {
       <Navbar />
       <div className='text-red' style={{ marginTop: 90, width: '90%' }}>
 
-        <div onClick={handleModal} className="modal fade" id="thanksModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div onClick={handleModal} className="modal fade" id="thanksModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div data-bs-dismiss="modal" id='modalClose'></div>
           <div onClick={handleModal} className="modal-dialog modal-dialog-centered modal-xl">
             <div className="modal-content thanks-message">

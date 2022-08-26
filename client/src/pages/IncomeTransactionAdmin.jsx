@@ -1,9 +1,9 @@
 import React from 'react'
-import { useQuery } from 'react-query';
 import { API } from '../config/api';
 import convertRupiah from 'rupiah-format'
 
 import { Navbar, TransactionCard } from '../components'
+import { useQuery } from 'react-query';
 
 function IncomeTransactionAdmin() {
 
@@ -12,30 +12,29 @@ function IncomeTransactionAdmin() {
     return response.data.data
   });
 
-  console.log(transactions)
-
-
   return (
     <div className='container d-flex justify-content-center'>
 
       <Navbar />
 
-      <div className="modal fade" id="transactionModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
+      {transactions?.map((item) => (
+        <div key={item.id} className="modal fade position-absolute" id={`transactionModal${item.id}`} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered position-relative">
+            <div className="modal-content position-relative">
 
-            <TransactionCard
-              id={transactions?.id}
-              date={transactions?.updated_at}
-              status={transactions?.status}
-              subTotal={transactions?.amount}
-              cart={transactions?.cart}
-            />
+              <TransactionCard
+                key={item.id}
+                id={item?.id}
+                date={item?.updated_at}
+                status={item?.status}
+                subTotal={item?.amount}
+                cart={item?.cart}
+              />
 
+            </div>
           </div>
         </div>
-      </div>
-
+      ))}
 
       <div style={{ marginTop: 90, width: '90%' }}>
 
@@ -55,11 +54,11 @@ function IncomeTransactionAdmin() {
           <tbody>
             {transactions?.map((item, index) => {
               return (
-                <tr className='cursor-pointer' data-bs-toggle="modal" data-bs-target="#transactionModal" key={item.id}>
+                <tr className='cursor-pointer' data-bs-toggle="modal" data-bs-target={`#transactionModal${item.id}`} key={item.id}>
                   <td>{index + 1}</td>
-                  <td>{item?.user?.fullName}</td>
-                  <td>{item?.user?.profile?.address}</td>
-                  <td>{item?.user?.profile?.postCode}</td>
+                  <td>{item?.buyer?.fullName}</td>
+                  <td>{item?.buyer?.profile?.address}</td>
+                  <td>{item?.buyer?.profile?.post_code}</td>
                   <td className='text-primary'>{convertRupiah.convert(item?.amount)}</td>
                   <td className={`text-${item?.status === 'Waiting Approve' ? 'warning' :
                     item?.status === 'Success' ? 'success' :

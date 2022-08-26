@@ -1,16 +1,18 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type Transaction struct {
-	ID        int            `json:"id" gorm:"primary_key:auto_increment"`
-	Amount    int            `json:"amount"`
-	Status    string         `json:"status"`
-	BuyerID   int            `json:"buyer_id"`
-	Buyer     UserProfileRel `json:"buyer"`
-	Carts     []Cart         `json:"cart"`
-	CreatedAt time.Time      `json:"-"`
-	UpdatedAt time.Time      `json:"updated_at"`
+	ID        int       `json:"id" gorm:"primary_key:auto_increment"`
+	Amount    int       `json:"amount"`
+	Status    string    `json:"status"`
+	BuyerID   int       `json:"buyer_id"`
+	Buyer     User      `json:"buyer"`
+	Carts     []Cart    `json:"cart"`
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type TransactionCartRel struct {

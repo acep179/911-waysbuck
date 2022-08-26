@@ -7,13 +7,22 @@ import logo from "../assets/img/waysbuck_logo.png"
 import iconCart from "./../assets/img/cart_icon.png"
 import userIcon from "./../assets/img/user_icon.png"
 import logoutIcon from "./../assets/img/logout_icon.png"
-import { CartContext } from "../context/cartContext"
+import { useQuery } from "react-query"
+import { API } from "../config/api"
 
 
 function Navbar() {
 
-  const [cart] = useContext(CartContext)
   const [state, dispatch] = useContext(UserContext)
+
+  let { data: cartData } = useQuery('cartsUserIdCache', async () => {
+    const response = await API.get('/carts-userid');
+    return response.data.data
+  });
+
+  const carts = cartData?.filter((item) => {
+    return item.transaction_id === null
+  })
 
   const isLogin = state.isLogin
   const isAdmin = state.user.status === 'admin' ? true : false
@@ -69,7 +78,7 @@ function Navbar() {
                     <li className="nav-item cursor-pointer">
                       <Link className="position-relative" to="/cart">
                         <img src={iconCart} alt="cart" />
-                        {cart === undefined ? <p></p> : <p className="cart-total">{cart}</p>}
+                        {carts?.length === 0 ? <p></p> : <p className="cart-total">{carts?.length}</p>}
                       </Link>
                     </li>
 

@@ -1,10 +1,9 @@
-import { React, useContext, useState, useEffect } from 'react'
+import { React, useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery } from 'react-query';
 import convertRupiah from 'rupiah-format'
 
 import { Navbar } from '../components'
-import { CartContext } from '../context/cartContext'
 import { API } from '../config/api';
 
 function DetailProduct() {
@@ -12,7 +11,6 @@ function DetailProduct() {
   const navigate = useNavigate()
   const { id } = useParams()
 
-  let [cart, setCart] = useContext(CartContext)
   const [toppingPrices, setToppingPrices] = useState([])
   const [toppings, setToppings] = useState([]);
   const [toppingId, setToppingId] = useState([]);
@@ -70,7 +68,6 @@ function DetailProduct() {
   const handleSubmit = useMutation(async (e) => {
     try {
       e.preventDefault()
-      setCart(cart++)
 
       const config = {
         headers: {

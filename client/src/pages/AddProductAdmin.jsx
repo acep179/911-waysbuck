@@ -70,12 +70,12 @@ function AddProductAdmin() {
       <>
         <div className='row justify-content-between' style={{ marginTop: 90, width: '90%' }}>
           <div className='col-6'>
-            <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal fade" id="successModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div data-bs-dismiss="modal" id='modalClose'></div>
-              <div class="modal-dialog modal-dialog-centered modal-xl">
-                <div class="modal-content thanks-message">
+              <div className="modal-dialog modal-dialog-centered modal-xl">
+                <div className="modal-content thanks-message">
 
-                  <div class="modal-body">
+                  <div className="modal-body">
                     <p>Add Product Success</p>
                   </div>
 

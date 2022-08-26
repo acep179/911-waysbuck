@@ -7,6 +7,7 @@ type Profile struct {
 	Image     string         `json:"image" gorm:"type: varchar(255)"`
 	Phone     string         `json:"phone" gorm:"type: varchar(255)"`
 	Address   string         `json:"address" gorm:"type: text"`
+	PostCode  string         `json:"post_code" gorm:"type: varchar(255)"`
 	UserID    int            `json:"user_id"`
 	User      UserProfileRel `json:"user"`
 	CreatedAt time.Time      `json:"created_at"`
@@ -15,10 +16,11 @@ type Profile struct {
 
 // for association relation with another table (user)
 type ProfileResponse struct {
-	Phone   string `json:"phone"`
-	Image   string `json:"image"`
-	Address string `json:"address"`
-	UserID  int    `json:"-"`
+	Phone    string `json:"phone"`
+	Image    string `json:"image"`
+	Address  string `json:"address"`
+	PostCode string `json:"post_code"`
+	UserID   int    `json:"-"`
 }
 
 func (ProfileResponse) TableName() string {

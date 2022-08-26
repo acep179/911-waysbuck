@@ -6,12 +6,16 @@ import { API } from '../config/api';
 
 function Profile() {
 
-  let { data: transactions } = useQuery('transactionsCache', async () => {
+  const [state] = useContext(UserContext)
+
+  let { data: transactionData } = useQuery('transactionsCache', async () => {
     const response = await API.get('/transactions');
     return response.data.data
   });
 
-  const [state] = useContext(UserContext)
+  let transactions = transactionData?.filter((item) => {
+    return item.buyer_id == state.user.id
+  })
 
   return (
     <div className='container d-flex justify-content-center'>
@@ -34,6 +38,7 @@ function Profile() {
           <h3 className='text-brown mb-4'>My Transaction</h3>
           {transactions?.map((item) => {
             return <TransactionCard
+              key={item?.id}
               mb='1rem'
               id={item?.id}
               date={item?.updated_at}
