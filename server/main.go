@@ -42,5 +42,5 @@ func main() {
 	fmt.Println("server running localhost:" + port)
 
 	//. Embed the setup allowed in 2 parameter
-	http.ListenAndServe("localhost:"+port, handlers.CORS(AllowedHeaders, AllowedMethods, AllowedOrigins)(r))
+	http.ListenAndServe(":"+port, handlers.CORS(AllowedHeaders, AllowedMethods, AllowedOrigins)(r))
 }
