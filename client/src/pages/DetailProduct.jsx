@@ -41,11 +41,11 @@ function DetailProduct() {
     } else {
 
       let newToppingId = toppingId.filter((toppingIdItem) => {
-        return toppingIdItem != id;
+        return Number(toppingIdItem) !== Number(id);
       });
 
       let newToppingPrice = toppingPrices.filter((toppingPriceItem) => {
-        return toppingPriceItem.id != id;
+        return Number(toppingPriceItem.id) !== Number(id);
       });
 
       setToppingId(newToppingId);

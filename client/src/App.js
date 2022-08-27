@@ -47,7 +47,7 @@ function App() {
     if (localStorage.token) {
       checkUser();
     }
-  }, []);
+  },);
 
   let isLogin = state.isLogin
   let isAdmin = state.user.status === "admin" ? true : false

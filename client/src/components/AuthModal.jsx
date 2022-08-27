@@ -5,7 +5,7 @@ import { API } from '../config/api';
 
 function AuthModal() {
 
-  const [state, dispatch] = useContext(UserContext)
+  const [, dispatch] = useContext(UserContext)
   const [message, setMessage] = useState(null)
 
 

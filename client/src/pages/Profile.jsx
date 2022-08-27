@@ -14,7 +14,7 @@ function Profile() {
   });
 
   let transactions = transactionData?.filter((item) => {
-    return item.buyer_id == state.user.id
+    return Number(item.buyer_id) === Number(state.user.id)
   })
 
   return (

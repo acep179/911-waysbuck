@@ -57,10 +57,6 @@ function Cart() {
       const transaction = await API.post("/transaction", transactionBody, config)
       const id = transaction.data.data.id
 
-      for (let i = 0; i < carts.length; i++) {
-        await API.patch(`/cart/${carts[i].id}`, { "transaction_id": id }, config)
-      }
-
       const snap = await API.get(`/snap/${id}`)
 
       const token = snap.data.data.token;
@@ -86,6 +82,9 @@ function Cart() {
         },
       });
 
+      for (let i = 0; i < carts.length; i++) {
+        await API.patch(`/cart/${carts[i].id}`, { "transaction_id": id }, config)
+      }
 
     } catch (error) {
       console.log(error)
